@@ -3,8 +3,8 @@
 .vscode
 stderr
 nodeos
-!include/**/*.wasm
-!include/**/*.abi
+!external/**/*.wasm
+!external/**/*.abi
 node_modules
 
 # Prerequisites

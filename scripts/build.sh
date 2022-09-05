@@ -9,7 +9,3 @@ fi
 if [ ! -f "./external/eosio.token/eosio.token.wasm" ]; then
     blanc++ ./external/eosio.token/eosio.token.cpp -I external -o external/eosio.token/eosio.token.wasm
 fi
-
-# unlock wallet & deploy
-cleos wallet unlock --password $(cat ~/eosio-wallet/.pass)
-cleos set contract pool.pomelo . pool.pomelo.wasm pool.pomelo.abi
