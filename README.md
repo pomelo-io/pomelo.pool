@@ -7,7 +7,7 @@
 | Chain       | Contract     |
 |-------------|--------------|
 | EOS         | `pool.pomelo`|
-| EOS (dev)   | `d.pool.gems`|
+| EOS (dev)   | `d.pool.pomelo`|
 
 ## Actions
 
@@ -36,11 +36,11 @@
 
 ```bash
 # mint NFT
-$ cleos push action atomicassets transfer '["myaccount", "pool.gems", [1099511627776, 1099511627777], "NFTA"]' -p myaccount
+$ cleos push action atomicassets transfer '["myaccount", "pool.pomelo", [1099511627776, 1099511627777], "NFTA"]' -p myaccount
 # //=> receive 2.0000 NFTA
 
 # redeem NFT (0% fee)
-$ cleos transfer myaccount pool.gems "1.0000 NFTA" "1099511627776" --contract pool.gems
+$ cleos transfer myaccount pool.pomelo "1.0000 NFTA" "1099511627776" --contract pool.pomelo
 # //=> receive 1x NFT
 ```
 
@@ -48,10 +48,10 @@ $ cleos transfer myaccount pool.gems "1.0000 NFTA" "1099511627776" --contract po
 
 ```bash
 # create NFT pool
-$ cleos push action pool.gems create '["NFTA", "mycollection", 21881, "", []]' -p author
+$ cleos push action pool.pomelo create '["NFTA", "mycollection", 21881, "", []]' -p pomelo -p pool.pomelo
 
 # destroy NFT pool (must have zero supply)
-$ cleos push action pool.gems destroy '["NFTA"]' -p author
+$ cleos push action pool.pomelo destroy '["NFTA"]' -p pomelo
 ```
 
 ### `USER` (Defibox)
@@ -73,7 +73,7 @@ cleos transfer myaccount swap.defi "1.0000 NFTA" "swap,0,<pair_id>"
 # //=> receive EOS tokens
 
 # deposit to Defibox (dual liquidity)
-cleos transfer myaccount swap.defi "1.0000 NFTA" --contract token.gems "deposit,<pair_id>"
+cleos transfer myaccount swap.defi "1.0000 NFTA" --contract pool.pomelo "deposit,<pair_id>"
 cleos transfer myaccount swap.defi "1.0000 EOS" --contract eosio.token "deposit,<pair_id>"
 cleos push action swap.defi deposit '["myaccount", "<pair_id>"]' -p myaccount
 # //=> receive Defibox LP tokens
@@ -169,7 +169,7 @@ $ cleos push action pool.pomelo create '["NFTA", "mycollection", 21882, rarity, 
 ### example
 
 ```bash
-$ cleos push action pool.gems destroy '["NFTA"]' -p mycollection
+$ cleos push action pool.pomelo destroy '["NFTA"]' -p mycollection
 ```
 
 ## ACTION `logcreate`
