@@ -1,0 +1,25 @@
+{
+  "private": true,
+  "name": "pool.pomelo",
+  "version": "1.0.0",
+  "description": "Pomelo NFT Pool",
+  "license": "MIT",
+  "main": "index.js",
+  "repository": "git@github.com:pomelo-io/pool.pomelo.git",
+  "contributors": [
+    "Denis Carriere",
+    "Yaro Shkvorets"
+  ],
+  "scripts": {
+    "build": "./build.sh",
+    "test": "jest --verbose"
+  },
+  "devDependencies": {
+    "@proton/vert": "*",
+    "@types/chai": "4.x",
+    "@types/jest": "28.x",
+    "jest": "28.x",
+    "ts-jest": "28.x",
+    "typescript": "4.x"
+  }
+}

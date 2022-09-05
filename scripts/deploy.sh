@@ -14,7 +14,7 @@ cleos create account eosio atomicassets EOS6MRyAjQq8ud7hVNYcfnVPJqcVpscN5So8BhtH
 
 # deploy
 cleos set contract pool.pomelo . pool.pomelo.wasm pool.pomelo.abi
-cleos set contract atomicassets include/atomicassets atomicassets.wasm atomicassets.abi
+cleos set contract atomicassets external/atomicassets atomicassets.wasm atomicassets.abi
 
 # permissions
 cleos set account permission pool.pomelo active --add-code

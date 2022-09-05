@@ -5,6 +5,7 @@ stderr
 nodeos
 !include/**/*.wasm
 !include/**/*.abi
+node_modules
 
 # Prerequisites
 *.d

@@ -3,11 +3,11 @@
 blanc++ pool.pomelo.cpp -I include
 
 if [ ! -f "./include/atomicassets/atomicassets.wasm" ]; then
-    blanc++ ./include/atomicassets/atomicassets.cpp -I include -o include/atomicassets/atomicassets.wasm
+    blanc++ ./external/atomicassets/atomicassets.cpp -I external -o external/atomicassets/atomicassets.wasm
 fi
 
-if [ ! -f "./include/eosio.token/eosio.token.wasm" ]; then
-    blanc++ ./include/eosio.token/eosio.token.cpp -I include -o include/eosio.token/eosio.token.wasm
+if [ ! -f "./external/eosio.token/eosio.token.wasm" ]; then
+    blanc++ ./external/eosio.token/eosio.token.cpp -I external -o external/eosio.token/eosio.token.wasm
 fi
 
 # unlock wallet & deploy

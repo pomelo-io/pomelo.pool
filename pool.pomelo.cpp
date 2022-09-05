@@ -165,7 +165,8 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
     // validate max supply (enforce max supply)
     const symbol sym = { symcode, TOKEN_PRECISION };
     int64_t max_supply_amount = mytemplate.max_supply * pow( 10, TOKEN_PRECISION );
-    check( max_supply_amount > 0, ERROR_INVALID_MAX_SUPPLY );
+    if ( max_supply_amount == 0 || max_supply_amount > MAX_SUPPLY ) max_supply_amount = MAX_SUPPLY;
+    // check( max_supply_amount > 0, ERROR_INVALID_MAX_SUPPLY );
 
     // create pool
     _pools.emplace( author, [&]( auto& row ) {

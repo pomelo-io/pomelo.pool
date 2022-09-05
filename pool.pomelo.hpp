@@ -16,6 +16,7 @@ public:
     using contract::contract;
 
     const uint8_t TOKEN_PRECISION = 4;
+    const int64_t MAX_SUPPLY = 1'000'000'000'0000; // 1M
 
     // Error messages
     const string ERROR_INVALID_NFT_MEMO = "pool::error: invalid <pool_symbol> memo (ex: NFTA )";

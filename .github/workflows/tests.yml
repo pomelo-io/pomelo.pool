@@ -1,0 +1,20 @@
+name: EOSIO Smart Contract
+
+on: [push]
+
+jobs:
+  tests:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Blanc++
+        run: sudo add-apt-repository ppa:conr2d/blanc -y && sudo apt install blanc clang-12 lld-12 binaryen -y
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm test
