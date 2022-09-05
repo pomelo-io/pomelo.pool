@@ -86,7 +86,7 @@ public:
      *
      * > Create a new NFT token pool
      *
-     * - **authority**: `collection_name::author`  & `get_self()`
+     * - **authority**: `get_self()`
      *
      * ### checks
      *

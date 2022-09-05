@@ -129,7 +129,7 @@ cleos transfer myaccount swap.defi "1000000 BOXABC" --contract lptoken.defi ""
 
 > Create a new NFT token pool
 
-- **authority**: `collection_name::author`  & `get_self()`
+- **authority**: `get_self()`
 
 ### checks
 

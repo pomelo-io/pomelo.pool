@@ -165,12 +165,12 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
     stats _stats( get_self(), symcode.raw() );
     pools_table _pools( get_self(), get_self().value );
 
-    // Must be created by collection author
-    const name author = atomic::get_author( collection_name );
+    // // Must be created by collection author
+    // const name author = atomic::get_author( collection_name );
+    // require_auth( author );
 
     // restrict creation authority
-    require_auth( author );
-    require_auth( get_self() ); // Beta
+    require_auth( get_self() );
 
     // verify template exists and transferable
     const auto& mytemplate = atomic::get_template( collection_name, template_id );
@@ -196,7 +196,7 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
     // check( max_supply_amount > 0, ERROR_INVALID_MAX_SUPPLY );
 
     // create pool
-    _pools.emplace( author, [&]( auto& row ) {
+    _pools.emplace( get_self(), [&]( auto& row ) {
         row.sym = sym;
         row.collection_name = collection_name;
         row.schema_name = mytemplate.schema_name;

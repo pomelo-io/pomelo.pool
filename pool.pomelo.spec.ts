@@ -79,8 +79,7 @@ describe('pool.pomelo', () => {
     const symcode = "NFTA";
     const collection_name = "mycollection";
     const template_id = 1;
-    const auth = [{actor: "mycollection", permission: 'active'}, {actor: "pool.pomelo", permission: 'active'}];
-    await contracts.pool.actions.create([symcode, collection_name, template_id, {"name": "fuel", "type": "uint8"}, [{key: '1', value: 10000}, {key: '3', value: 30000}]]).send(auth);
+    await contracts.pool.actions.create([symcode, collection_name, template_id, {"name": "fuel", "type": "uint8"}, [{key: '1', value: 10000}, {key: '3', value: 30000}]]).send("pool.pomelo");
     expect(getPool(symcode).template_id).toBe(template_id);
   });
 
@@ -91,17 +90,15 @@ describe('pool.pomelo', () => {
 
   // ERRORS
   it("error::create: collection does not exists", async () => {
-    const auth = [{actor: "invalid", permission: 'active'}, {actor: "pool.pomelo", permission: 'active'}];
-    const action = contracts.pool.actions.create(["NFTA", "invalid", 1, {"name": "", "type": ""}, []]).send(auth);
-    await expectToThrow(action, "`collection_name` does not exist");
+    const action = contracts.pool.actions.create(["NFTA", "invalid", 1, {"name": "", "type": ""}, []]).send("pool.pomelo");
+    await expectToThrow(action, "`template_id` does not exist in `collection_name`");
   });
 
   it("error::create: attribute type does not match", async () => {
-    const auth = [{actor: "mycollection", permission: 'active'}, {actor: "pool.pomelo", permission: 'active'}];
-    const action1 = contracts.pool.actions.create(["NFTC", "mycollection", 3, {"name": "fuel", "type": "int8"}, []]).send(auth);
+    const action1 = contracts.pool.actions.create(["NFTC", "mycollection", 3, {"name": "fuel", "type": "int8"}, []]).send("pool.pomelo");
     await expectToThrow(action1, "[attribute] does not exists");
 
-    const action2 = contracts.pool.actions.create(["NFTC", "mycollection", 3, {"name": "invalid", "type": "string"}, []]).send(auth);
+    const action2 = contracts.pool.actions.create(["NFTC", "mycollection", 3, {"name": "invalid", "type": "string"}, []]).send("pool.pomelo");
     await expectToThrow(action2, "[attribute] does not exists");
   });
 });
