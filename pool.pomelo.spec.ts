@@ -142,6 +142,11 @@ describe('pool.pomelo', () => {
     const action2 = contracts.pool.actions.create(["FOO", "mycollection", 4, {"name": "invalid", "type": "string"}, []]).send("pool.pomelo");
     await expectToThrow(action2, "[attribute] does not exists");
   });
+
+  it("error::redeem fake token", async () => {
+    const action = fake.pool.actions.transfer(["pool.fake", "pool.pomelo", "2.0000 NFTA", "1099511627781,1099511627782"]).send("pool.fake");
+    await expectToThrow(action, "invalid quantity");
+  });
 });
 
 /**
