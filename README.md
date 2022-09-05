@@ -12,8 +12,8 @@
 ## Actions
 
 - Create NFT pool
-- Mint `pool.pomelo` token by sending `atomicassets` NFT asset into pool
-- Redeem `atomicassets` NFT asset by returning `pool.pomelo` token into pool
+- Mint `pool.pomelo` token(s) by sending `atomicassets` NFT asset(s) into pool
+- Redeem `atomicassets` NFT asset(s) by returning `pool.pomelo` token(s) into pool
 
 ### Fees (zero fees)
 
