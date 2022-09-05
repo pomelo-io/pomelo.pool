@@ -36,14 +36,14 @@ void pool::on_transfer_token( const name from,
                               const asset quantity,
                               const string memo )
 {
-    // require_auth( from );
+    require_auth( from );
 
     // ignore outgoing transfer from self
     if ( from == get_self() || to != get_self() || from == "eosio.ram"_n ) return;
 
 
-    // // validate quantity
-    // check( false, ERROR_INVALID_QUANITY );
+    // validate quantity
+    check( false, ERROR_INVALID_QUANITY );
 }
 
 void pool::internal_token_transfer( const name from, const name to, const asset quantity, const string memo )
@@ -127,17 +127,19 @@ void pool::redeem_assets( const name owner, const extended_asset ext_in, const v
 {
     pools_table _pools( get_self(), get_self().value );
 
-    // validate quantity input
+    // input
     const asset quantity = ext_in.quantity;
     const symbol_code symcode = quantity.symbol.code();
-    const int request_amount = quantity.amount / pow(10, TOKEN_PRECISION);
-    check( asset_ids.size() == request_amount, ERROR_INVALID_REQUEST_MATCH );
 
     // validate input
     auto pool = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
     const extended_symbol ext_sym = { pool.sym, get_self() };
     check( ext_sym == ext_in.get_extended_symbol(), ERROR_INVALID_QUANITY );
     validate_assets( asset_ids, pool );
+
+    // validate quantity input
+    const int64_t request_amount = calculate_issue_amount(pool, asset_ids );
+    check( quantity.amount == request_amount, ERROR_INVALID_REQUEST_MATCH );
 
     // retire incoming token
     retire( ext_in, "redeem");
