@@ -1,8 +1,8 @@
 #!/bin/bash
 
-blanc++ pool.pomelo.cpp -I include
+blanc++ pool.pomelo.cpp -I external
 
-if [ ! -f "./include/atomicassets/atomicassets.wasm" ]; then
+if [ ! -f "./external/atomicassets/atomicassets.wasm" ]; then
     blanc++ ./external/atomicassets/atomicassets.cpp -I external -o external/atomicassets/atomicassets.wasm
 fi
 

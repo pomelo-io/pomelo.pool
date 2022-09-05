@@ -11,7 +11,7 @@
     "Yaro Shkvorets"
   ],
   "scripts": {
-    "build": "./build.sh",
+    "build": "./scripts/build.sh",
     "test": "jest --verbose"
   },
   "devDependencies": {

@@ -378,6 +378,7 @@ private:
     void mint_tokens( const name owner, const symbol_code symcode, const vector<uint64_t>& asset_ids );
     void redeem_assets( const name owner, const extended_asset ext_in, const vector<uint64_t>& asset_ids );
     void validate_assets( const vector<uint64_t> asset_ids, const pools_row& pool );
+    bool has_attribute( const name collection_name, const name schema_name, const string attribute );
 
     // on transfer
     void internal_token_transfer( const name from, const name to, const asset quantity, const string memo );

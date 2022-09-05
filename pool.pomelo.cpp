@@ -135,6 +135,15 @@ void pool::validate_assets(const vector<uint64_t> asset_ids, const pools_row& po
     }
 }
 
+bool pool::has_attribute( const name collection_name, const name schema_name, const string attribute )
+{
+    vector<atomicdata::FORMAT> format = atomic::get_schema( collection_name, schema_name ).format;
+    for ( const auto row : format ) {
+        if ( row.name == attribute ) return true;
+    }
+    return false;
+}
+
 [[eosio::action]]
 void pool::create( const symbol_code symcode, const name collection_name, const int32_t template_id, const string attribute, const map<string, int64_t> values )
 {
@@ -152,8 +161,8 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
     const auto& mytemplate = atomic::get_template( collection_name, template_id );
     check( mytemplate.transferable, "pool::create: [template_id] must be transferable");
 
-    // TO-DO
-    // Validate attribute if exists
+    // validate attribute if exists
+    if ( attribute.length() ) check( has_attribute(collection_name, mytemplate.schema_name, attribute), "pool::create: [attribute] does not exists");
 
     // verify wrap for this template doesn't already exist
     const auto index = _pools.get_index<"bytemplate"_n>();
