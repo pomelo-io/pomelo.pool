@@ -1,4 +1,4 @@
-# 🍈 `Pomelo` NFT pool technology [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE) [![EOSIO Smart Contract](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml/badge.svg)](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml)
+# 🍈 `Pomelo` NFT pool [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE) [![EOSIO Smart Contract](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml/badge.svg)](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml)
 
 # Overview
 
@@ -12,15 +12,15 @@
 ## Actions
 
 - Create NFT pool
-- Mint `atomicassets` NFT into `eosio.token` token
-- Redeem `eosio.token` token for `atomicassets` NFT
+- Mint `pool.pomelo` token by sending `atomicassets` NFT asset into pool
+- Redeem `atomicassets` NFT asset by returning `pool.pomelo` token into pool
 
-### Fees
+### Fees (zero fees)
 
 - **Mint**
-    - No fees on mint
+    - ❌ No fee on mint
 - **Redeem**
-    - No fee on redeem
+    - ❌ No fee on redeem
 
 ## Quickstart
 
