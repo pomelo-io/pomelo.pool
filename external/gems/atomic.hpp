@@ -128,6 +128,13 @@ string attribute_to_string( const ATTRIBUTE_MAP& data, const string key ) {
     return std::get<string>( data.at(key) );
 }
 
+string attribute_to_string( const ATTRIBUTE_MAP& data, const atomicdata::FORMAT format ) {
+    const auto value = data.at(format.name);
+    if ( format.type == "uint8") return to_string(std::get<uint8_t>( value ));
+    if ( format.type == "uint64") return to_string(std::get<uint64_t>( value ));
+    return std::get<string>( value );
+}
+
 name attribute_to_name( const ATTRIBUTE_MAP& data, const string key ) {
     return name{ tolower( std::get<string>( data.at(key) )) };
 }
@@ -225,6 +232,15 @@ bool attribute_exists( const vector<FORMAT> data, const FORMAT& format )
         [&](const auto& attr) { return attr.name == format.name && attr.type == format.type;}
     );
     return res != data.end();
+}
+
+bool has_attribute( const name collection_name, const name schema_name, const string attribute )
+{
+    vector<atomicdata::FORMAT> format = atomic::get_schema( collection_name, schema_name ).format;
+    for ( const auto row : format ) {
+        if ( row.name == attribute ) return true;
+    }
+    return false;
 }
 
 }   // end atomic

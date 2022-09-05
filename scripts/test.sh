@@ -19,12 +19,12 @@ cleos push action atomicassets mintasset '[mycollection, mycollection, myschema,
 cleos push action atomicassets mintasset '[mycollection, mycollection, myschema, 2, myaccount, [], [], []]' -p mycollection -f
 
 # create
-cleos -v push action pool.pomelo create '[NFTA, mycollection, 1, "", []]' -p mycollection -p pool.pomelo
-cleos -v push action pool.pomelo create '[NFTB, mycollection, 2, "", []]' -p mycollection -p pool.pomelo
+cleos -v push action pool.pomelo create '[NFTA, mycollection, 1, {"name": "", "type": ""}, []]' -p mycollection -p pool.pomelo
+cleos -v push action pool.pomelo create '[NFTB, mycollection, 2, {"name": "", "type": ""}, []]' -p mycollection -p pool.pomelo
 
 # destroy & create
 cleos -v push action pool.pomelo destroy '[NFTB]' -p mycollection -p pool.pomelo
-cleos -v push action pool.pomelo create '[NFTB, mycollection, 2, "", []]' -p mycollection -p pool.pomelo -f
+cleos -v push action pool.pomelo create '[NFTB, mycollection, 2, {"name": "", "type": ""}, []]' -p mycollection -p pool.pomelo -f
 
 # mint
 cleos -v push action atomicassets transfer '[myaccount, pool.pomelo, [1099511627776, 1099511627777], "NFTA"]' -p myaccount -p mycollection

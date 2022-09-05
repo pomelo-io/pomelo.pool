@@ -29,7 +29,7 @@ void pool::logredeem( const name owner, const asset quantity, const vector<uint6
 }
 
 [[eosio::action]]
-void pool::logcreate( const symbol sym, const name collection_name, const int32_t template_id, const string attribute, const map<string, int64_t> values )
+void pool::logcreate( const symbol sym, const name collection_name, const int32_t template_id, const atomicdata::FORMAT attribute, const map<string, int64_t> values )
 {
     require_auth( get_self() );
 }

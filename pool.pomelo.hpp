@@ -46,7 +46,7 @@ public:
      * - `{name} collection_name` - AtomicAssets collection name (ex: `mycollection`)
      * - `{name} schema_name` - AtomicAssets schema name (ex: `myschema`)
      * - `{int32_t} template_id` - AtomicAssets template ID (ex: `21881`)
-     * - `{string} attribute` - AtomicAsset attribute key (ex: `rarity`)
+     * - `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `{"name": "rarity", "type": "string"}`)
      * - `{map<string, int64_t>} values` - pool asset values
      *
      * ### example
@@ -57,7 +57,7 @@ public:
      *     "collection_name": "mycollection",
      *     "schema_name": "myschema",
      *     "template_id": 21881,
-     *     "attribute": "rarity",
+     *     "attribute": {"name": "rarity", "type": "string"},
      *     "values": [
      *         {"key": "Common", "value": 10000},
      *         {"key": "Rare", "value": 30000},
@@ -71,7 +71,7 @@ public:
         name                    collection_name;
         name                    schema_name;
         int32_t                 template_id;
-        string                  attribute;
+        atomicdata::FORMAT      attribute;
         map<string, int64_t>    values;
 
         uint64_t primary_key() const { return sym.code().raw(); }
@@ -100,17 +100,17 @@ public:
      * - `{symbol_code} symcode` - pool symbol code (ex: `NFTA`)
      * - `{name} collection_name` -  AtomicAssets collection name (ex: `mycollection`)
      * - `{int32_t} template_id` -  AtomicAssets template ID (ex: `21881`)
-     * - `{string} [attribute]` - (optional) AtomicAsset attribute key (ex: `rarity`)
+     * - `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `{"name": "rarity", "type": "string"}`)
      * - `{pair<string, int64_t>} [values]` - (optional) pool asset values
      *
      * ### example
      *
      * ```bash
-     * $ cleos push action pool.pomelo create '["NFTA", "mycollection", 21882, rarity, [["Common", 1000000]]]' -p mycollection -p pool.pomelo
+     * $ cleos push action pool.pomelo create '["NFTA", "mycollection", 21882, {"name": "rarity", "type": "string"}, [{"key": "Common", "value": 10000}]]]' -p mycollection -p pool.pomelo
      * ```
      */
     [[eosio::action]]
-    void create( const symbol_code symcode, const name collection_name, const int32_t template_id, const string attribute, const map<string, int64_t> values );
+    void create( const symbol_code symcode, const name collection_name, const int32_t template_id, const atomicdata::FORMAT attribute, const map<string, int64_t> values );
 
     /**
      * ## ACTION `destroy`
@@ -148,7 +148,7 @@ public:
      * - `{symbol} sym` - pool symbol (ex: `4,NFTA`)
      * - `{name} collection_name` -  AtomicAssets collection name (ex: `mycollection`)
      * - `{int32_t} template_id` -  AtomicAssets template ID (ex: `21881`)
-     * - `{string} attribute` - AtomicAsset attribute key (ex: `rarity`)
+     * - `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `{"name": "rarity", "type": "string"}`)
      * - `{map<string, int64_t>} values` - pool asset values
      *
      * ### Example
@@ -158,7 +158,7 @@ public:
      *     "sym": "4,NFTA",
      *     "collection_name": "mycollection",
      *     "template_id": 21881,
-     *     "attribute": "rarity",
+     *     "attribute": {"name": "rarity", "type": "string"},
      *     "values": [
      *         {"key": "Common", "value": 10000},
      *         {"key": "Rare", "value": 30000},
@@ -168,7 +168,7 @@ public:
      * ```
      */
     [[eosio::action]]
-    void logcreate( const symbol sym, const name collection_name, const int32_t template_id, const string attribute, const map<string, int64_t> values );
+    void logcreate( const symbol sym, const name collection_name, const int32_t template_id, const atomicdata::FORMAT attribute, const map<string, int64_t> values );
 
     /**
      * ## ACTION `logmint`
@@ -378,7 +378,6 @@ private:
     void mint_tokens( const name owner, const symbol_code symcode, const vector<uint64_t>& asset_ids );
     void redeem_assets( const name owner, const extended_asset ext_in, const vector<uint64_t>& asset_ids );
     void validate_assets( const vector<uint64_t> asset_ids, const pools_row& pool );
-    bool has_attribute( const name collection_name, const name schema_name, const string attribute );
     int64_t calculate_issue_amount( const pools_row pool, const vector<uint64_t>& asset_ids );
 
     // on transfer

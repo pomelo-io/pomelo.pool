@@ -105,7 +105,7 @@ cleos transfer myaccount swap.defi "1000000 BOXABC" --contract lptoken.defi ""
 - `{name} collection_name` - AtomicAssets collection name (ex: `mycollection`)
 - `{name} schema_name` - AtomicAssets schema name (ex: `myschema`)
 - `{int32_t} template_id` - AtomicAssets template ID (ex: `21881`)
-- `{string} attribute` - AtomicAsset attribute key (ex: `rarity`)
+- `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `rarity`)
 - `{map<string, int64_t>} values` - pool asset values
 
 ### example
@@ -116,7 +116,7 @@ cleos transfer myaccount swap.defi "1000000 BOXABC" --contract lptoken.defi ""
     "collection_name": "mycollection",
     "schema_name": "myschema",
     "template_id": 21881,
-    "attribute": "rarity",
+    "attribute": {"name": "rarity", "type": "string"},
     "values": [
         {"key": "Common", "value": 10000},
         {"key": "Rare", "value": 30000},
@@ -129,7 +129,7 @@ cleos transfer myaccount swap.defi "1000000 BOXABC" --contract lptoken.defi ""
 
 > Create a new NFT token pool
 
-- **authority**: `collection_name::author` & `get_self()`
+- **authority**: `collection_name::author`  & `get_self()`
 
 ### checks
 
@@ -143,13 +143,13 @@ cleos transfer myaccount swap.defi "1000000 BOXABC" --contract lptoken.defi ""
 - `{symbol_code} symcode` - pool symbol code (ex: `NFTA`)
 - `{name} collection_name` -  AtomicAssets collection name (ex: `mycollection`)
 - `{int32_t} template_id` -  AtomicAssets template ID (ex: `21881`)
-- `{string} [attribute]` - (optional) AtomicAsset attribute key (ex: `rarity`)
+- `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `{"name": "rarity", "type": "string"}`)
 - `{pair<string, int64_t>} [values]` - (optional) pool asset values
 
 ### example
 
 ```bash
-$ cleos push action pool.pomelo create '["NFTA", "mycollection", 21882, rarity, [["Common", 1000000]]]' -p mycollection -p pool.pomelo
+$ cleos push action pool.pomelo create '["NFTA", "mycollection", 21882, {"name": "rarity", "type": "string"}, [{"key": "Common", "value": 10000}]]]' -p mycollection -p pool.pomelo
 ```
 
 ## ACTION `destroy`
@@ -183,7 +183,7 @@ $ cleos push action pool.pomelo destroy '["NFTA"]' -p mycollection
 - `{symbol} sym` - pool symbol (ex: `4,NFTA`)
 - `{name} collection_name` -  AtomicAssets collection name (ex: `mycollection`)
 - `{int32_t} template_id` -  AtomicAssets template ID (ex: `21881`)
-- `{string} attribute` - AtomicAsset attribute key (ex: `rarity`)
+- `{atomicdata::FORMAT} attribute` - AtomicAsset attribute key (ex: `{"name": "rarity", "type": "string"}`)
 - `{map<string, int64_t>} values` - pool asset values
 
 ### Example
@@ -193,7 +193,7 @@ $ cleos push action pool.pomelo destroy '["NFTA"]' -p mycollection
     "sym": "4,NFTA",
     "collection_name": "mycollection",
     "template_id": 21881,
-    "attribute": "rarity",
+    "attribute": {"name": "rarity", "type": "string"},
     "values": [
         {"key": "Common", "value": 10000},
         {"key": "Rare", "value": 30000},
