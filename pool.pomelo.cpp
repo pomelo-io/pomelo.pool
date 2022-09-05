@@ -85,10 +85,7 @@ void pool::mint_tokens( const name owner, const symbol_code symcode, const vecto
     validate_assets( asset_ids, pool );
 
     // calculate mint amounts
-    const uint8_t precision = sym.precision();
-    const int64_t issue_amount = asset_ids.size() * pow( 10, precision );
-
-    // TO-DO calculate mint bonus
+    const int64_t issue_amount = calculate_issue_amount( pool, asset_ids );
 
     // transfer to owner
     issue( get_self(), { issue_amount, ext_sym }, "mint" );
@@ -97,6 +94,15 @@ void pool::mint_tokens( const name owner, const symbol_code symcode, const vecto
     // logging
     logmint_action logmint( get_self(), { get_self(), "active"_n });
     logmint.send( owner, asset{ issue_amount, sym }, asset_ids );
+}
+
+int64_t pool::calculate_issue_amount( const pools_row pool, const vector<uint64_t>& asset_ids )
+{
+    // calculate mint amounts
+    const uint8_t precision = pool.sym.precision();
+    const int64_t issue_amount = asset_ids.size() * pow( 10, precision );
+
+    return issue_amount;
 }
 
 void pool::redeem_assets( const name owner, const extended_asset ext_in, const vector<uint64_t>& asset_ids )
