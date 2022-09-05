@@ -1,3 +1,11 @@
+*.wasm
+*.abi
+.vscode
+stderr
+nodeos
+!include/**/*.wasm
+!include/**/*.abi
+
 # Prerequisites
 *.d
 
