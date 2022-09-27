@@ -38,12 +38,32 @@ const getPool = (symcode: string): Pools => {
   return contracts.pool.tables.pools(scope).getTableRow(primaryKey);
 }
 
-const getBalance = ( account: string, symcode = "NFTA" ): number => {
+const getPools = (): Pools[] => {
+  const scope = Name.from('pool.pomelo').value.value;
+  return contracts.pool.tables.pools(scope).getTableRows();
+}
+
+const getBalance = ( account: string, symcode: string ): number => {
   const scope = Name.from(account).value.value;
   const primaryKey = Asset.SymbolCode.from(symcode).value.value;
   const result = contracts.pool.tables.accounts(scope).getTableRow(primaryKey);
   if ( result?.balance ) return Asset.from( result.balance ).units.toNumber();
   return 0;
+}
+
+const getSupply = ( symcode: string ): number => {
+  const scope = Asset.SymbolCode.from(symcode).value.value;
+  const result = contracts.pool.tables.stat(scope).getTableRow(scope);
+  if ( result?.supply ) return Asset.from( result.supply ).units.toNumber();
+  return 0;
+}
+
+const transfer = (from: string, to: string, quantity: string, memo: string) => {
+  return contracts.pool.actions.transfer([from, to, quantity, memo]).send(from);
+}
+
+const atomic_transfer = (from: string, to: string, asset_ids: number[], memo: string) => {
+  return contracts.atomic.actions.transfer([from, to, asset_ids, memo]).send(from);
 }
 
 // one-time setup
@@ -62,6 +82,7 @@ beforeAll(async () => {
   await contracts.atomic.actions.createtempl(['mycollection', 'mycollection', 'myschema', true, true, 10000, []]).send('mycollection');
   await contracts.atomic.actions.createtempl(['mycollection', 'mycollection', 'myschema', true, true, 10000, []]).send('mycollection');
   await contracts.atomic.actions.createtempl(['mycollection', 'mycollection', 'myschema', true, true, 10000, []]).send('mycollection');
+  await contracts.atomic.actions.createtempl(['mycollection', 'mycollection', 'myschema', false, false, 10000, []]).send('mycollection');
 
   // mint assets
   await contracts.atomic.actions.mintasset(['mycollection', 'mycollection', 'myschema', 1, 'myaccount', [{"key": "fuel", "value": ["uint8", 1]}], [], []]).send('mycollection');
@@ -78,64 +99,77 @@ beforeAll(async () => {
 });
 
 describe('pool.pomelo', () => {
-  it("create - NFTA", async () => {
+  test("create - NFTA", async () => {
     const symcode = "NFTA";
     const template_id = 1;
     await contracts.pool.actions.create([symcode, "mycollection", template_id, {"name": "fuel", "type": "uint8"}, [{key: '1', value: 10000}, {key: '3', value: 30000}, {key: '5', value: 50000}]]).send("pool.pomelo");
     expect(getPool(symcode).template_id).toBe(template_id);
   });
 
-  it("create - NFTB", async () => {
+  test("create - NFTB", async () => {
     const symcode = "NFTB";
     const template_id = 2;
     await contracts.pool.actions.create([symcode, "mycollection", template_id, {"name": "rarity", "type": "string"}, [{key: 'Common', value: 10000}, {key: 'Rare', value: 30000}]]).send("pool.pomelo");
     expect(getPool(symcode).template_id).toBe(template_id);
   });
 
-  it("create - NFTC", async () => {
+  test("create - NFTC", async () => {
     const symcode = "NFTC";
     const template_id = 3;
     await contracts.pool.actions.create([symcode, "mycollection", template_id, {"name": "", "type": ""}, []]).send("pool.pomelo");
     expect(getPool(symcode).template_id).toBe(template_id);
   });
 
-  it("mint - NFTA", async () => {
+  test("mint - NFTA", async () => {
     await contracts.atomic.actions.transfer(["myaccount", "pool.pomelo", [1099511627776, 1099511627777, 1099511627778], "NFTA"]).send("myaccount");
     expect(getBalance("myaccount", "NFTA")).toBe(90000);
+    expect(getSupply("NFTA")).toBe(90000);
   });
 
-  it("mint - NFTB", async () => {
+  test("mint - NFTB", async () => {
     await contracts.atomic.actions.transfer(["myaccount", "pool.pomelo", [1099511627779, 1099511627780], "NFTB"]).send("myaccount");
     expect(getBalance("myaccount", "NFTB")).toBe(40000);
+    expect(getSupply("NFTB")).toBe(40000);
   });
 
-  it("mint - NFTC", async () => {
+  test("mint - NFTC", async () => {
     await contracts.atomic.actions.transfer(["myaccount", "pool.pomelo", [1099511627781, 1099511627782], "NFTC"]).send("myaccount");
     expect(getBalance("myaccount", "NFTC")).toBe(20000);
+    expect(getSupply("NFTC")).toBe(20000);
   });
 
-  it("redeem - NFTA", async () => {
+  test("redeem - NFTA", async () => {
     await contracts.pool.actions.transfer(["myaccount", "pool.pomelo", "9.0000 NFTA", "1099511627776,1099511627777,1099511627778"]).send("myaccount");
     expect(getBalance("myaccount", "NFTA")).toBe(0);
+    expect(getSupply("NFTA")).toBe(0);
   });
 
-  it("redeem - NFTB", async () => {
+  test("redeem - NFTB", async () => {
     await contracts.pool.actions.transfer(["myaccount", "pool.pomelo", "4.0000 NFTB", "1099511627779,1099511627780"]).send("myaccount");
     expect(getBalance("myaccount", "NFTB")).toBe(0);
+    expect(getSupply("NFTB")).toBe(0);
   });
 
-  it("redeem - NFTC", async () => {
+  test("redeem - NFTC", async () => {
     await contracts.pool.actions.transfer(["myaccount", "pool.pomelo", "2.0000 NFTC", "1099511627781,1099511627782"]).send("myaccount");
     expect(getBalance("myaccount", "NFTC")).toBe(0);
+    expect(getSupply("NFTC")).toBe(0);
   });
 
+  test("destroy - NFTB", async () => {
+    expect(getPools().length).toBe(3);
+    await contracts.pool.actions.destroy(["NFTB"]).send("pool.pomelo");
+    expect(getPools().length).toBe(2);
+    expect(getSupply("NFTB")).toBe(0);
+  })
+
   // ERRORS
-  it("error::create: collection does not exists", async () => {
+  test("error::create: collection does not exists", async () => {
     const action = contracts.pool.actions.create(["NFTA", "invalid", 1, {"name": "", "type": ""}, []]).send("pool.pomelo");
     await expectToThrow(action, "`template_id` does not exist in `collection_name`");
   });
 
-  it("error::create: attribute type does not match", async () => {
+  test("error::create: attribute type does not match", async () => {
     const action1 = contracts.pool.actions.create(["FOO", "mycollection", 4, {"name": "fuel", "type": "int8"}, []]).send("pool.pomelo");
     await expectToThrow(action1, "[attribute] does not exists");
 
@@ -143,9 +177,68 @@ describe('pool.pomelo', () => {
     await expectToThrow(action2, "[attribute] does not exists");
   });
 
-  it("error::redeem fake token", async () => {
+  test("error::redeem fake token", async () => {
     const action = fake.pool.actions.transfer(["pool.fake", "pool.pomelo", "2.0000 NFTA", "1099511627781,1099511627782"]).send("pool.fake");
     await expectToThrow(action, "invalid quantity");
+  });
+
+  test("error::invalid destroy pool", async () => {
+    const action1 = contracts.pool.actions.destroy(["NFTAA"]).send("pool.pomelo");
+    await expectToThrow(action1, "pool does not exist");
+
+    await contracts.atomic.actions.transfer(["myaccount", "pool.pomelo", [1099511627778], "NFTA"]).send("myaccount");
+    const action2 = contracts.pool.actions.destroy(["NFTA"]).send("pool.pomelo");
+    await expectToThrow(action2, "cannot destroy pool with active supply");
+
+    const action3 = contracts.pool.actions.destroy(["NFTAA"]).send("myaccount");
+    await expectToThrow(action3, "missing required authority pool.pomelo");
+  })
+
+  test("error::invalid create", async () => {
+    const action1 = contracts.pool.actions.create(["NFTA", "badcol", 1, {"name": "", "type": ""}, []]).send("pool.pomelo");
+    await expectToThrow(action1, "get_template: `template_id` does not exist in `collection_name`");
+
+    const action2 = contracts.pool.actions.create(["NFTA", "mycollection", 1, {"name": "", "type": ""}, []]).send("pool.pomelo");
+    await expectToThrow(action2, "[template_id] pool already exists");
+
+    const action3 = contracts.pool.actions.create(["NFTA", "mycollection", 3, {"name": "", "type": ""}, []]).send("pool.pomelo");
+    await expectToThrow(action3, "[template_id] pool already exists");
+
+    const action4 = contracts.pool.actions.create(["NFTD", "mycollection", 5, {"name": "", "type": ""}, []]).send("pool.pomelo");
+    await expectToThrow(action4, "[template_id] must be transferable");
+  })
+
+  test("error::invalid redeem", async () => {
+    const action1 = transfer("myaccount", "pool.pomelo", "1.0000 NFTA", "redeem");
+    await expectToThrow(action1, "invalid memo");
+
+    const action2 = transfer("myaccount", "pool.pomelo", "1.0000 NFTA", "abc");
+    await expectToThrow(action2, "invalid memo");
+
+    const action3 = transfer("myaccount", "pool.pomelo", "0.5000 NFTA", "1099511627778");
+    await expectToThrow(action3, "requested amount must equal to 5.0000 NFTA");
+
+    const action5 = transfer("myaccount", "pool.pomelo", "2.0000 NFTA", "1099511627778");
+    await expectToThrow(action5, "requested amount must equal to 5.0000 NFTA");
+
+    const action4 = transfer("myaccount", "pool.pomelo", "5.0000 NFTA", "1099511627789");
+    await expectToThrow(action4, "`asset_id` does not belong to `owner`");
+  });
+
+  test("error::invalid mint", async () => {
+    const action1 = atomic_transfer("myaccount", "pool.pomelo", [1099511627776], "NFTB");
+    await expectToThrow(action1, "pool does not exist");
+
+    // ISSUE TO REPORT: fails on Vert "Sender doesn't own at least one of the provided assets"
+
+    // const action2 = atomic_transfer("myaccount", "pool.pomelo", [1099511627776], "NFTC");
+    // await expectToThrow(action2, "[asset_id] does not match pool [template_id]");
+
+    // const action3 = atomic_transfer("myaccount", "pool.pomelo", [1099511627776], "foo");
+    // await expectToThrow(action3, "invalid <pool_symbol> memo");
+
+    // const action4 = atomic_transfer("myaccount", "pool.pomelo", [1099511627776], "nfta");
+    // await expectToThrow(action4, "invalid <pool_symbol> memo");
   });
 });
 

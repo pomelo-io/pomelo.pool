@@ -22,7 +22,6 @@ public:
     const string ERROR_INVALID_NFT_MEMO = "pool::error: invalid <pool_symbol> memo (ex: NFTA )";
     const string ERROR_INVALID_TOKEN_MEMO = "pool::error: invalid <asset_id> memo (ex: 2199023266689 )";
     const string ERROR_CONFIG_NOT_EXISTS = "pool::error: contract is under maintenance";
-    const string ERROR_INVALID_REQUEST_MATCH = "pool::error: quantity amount does not match <asset_id> memo requested";
     const string ERROR_INVALID_QUANITY = "pool::error: invalid quantity";
     const string ERROR_POOL_NOT_EXISTS = "pool::error: pool does not exist";
     const string ERROR_REQUIRE_AUTHOR = "pool::error: must be authorized by `collection_name::author`";

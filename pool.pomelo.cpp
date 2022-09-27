@@ -139,8 +139,8 @@ void pool::redeem_assets( const name owner, const extended_asset ext_in, const v
     validate_assets( asset_ids, pool );
 
     // validate quantity input
-    const int64_t request_amount = calculate_issue_amount(pool, asset_ids );
-    check( quantity.amount == request_amount, ERROR_INVALID_REQUEST_MATCH );
+    const int64_t request_amount = calculate_issue_amount( pool, asset_ids );
+    check( quantity.amount == request_amount, "pool::redeem_assets: requested amount must equal to " + asset{ request_amount, quantity.symbol }.to_string() );
 
     // retire incoming token
     retire( ext_in, "redeem");
@@ -232,7 +232,7 @@ void pool::destroy( const symbol_code symcode )
 
     // must not have any supply to be erased
     const asset supply = token::get_supply( get_self(), symcode );
-    check( supply.amount == 0, "pool::close: cannot close pool with active supply" );
+    check( supply.amount == 0, "pool::destroy: cannot destroy pool with active supply" );
     _pools.erase( pools );
 
     // destroy symbol

@@ -17,12 +17,8 @@ void pool::cleartable( const name table_name, const optional<name> scope, const 
     const uint64_t value = scope ? scope->value : get_self().value;
 
     // tables
-    pool::config_table _config( get_self(), value );
-    pool::protocols_table _protocols( get_self(), value );
-    pool::state_table _state( get_self(), value );
+    pool::pools_table _pools( get_self(), value );
 
-    if (table_name == "protocols"_n) clear_table( _protocols, rows_to_clear );
-    else if (table_name == "config"_n) _config.remove();
-    else if (table_name == "state"_n) _state.remove();
+    if (table_name == "pools"_n) clear_table( _pools, rows_to_clear );
     else check(false, "pool::cleartable: [table_name] unknown table to clear" );
 }
