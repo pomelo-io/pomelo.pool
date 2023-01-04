@@ -185,6 +185,12 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
         check( atomic::attribute_exists(format, attribute), "pool::create: [attribute] does not exists");
     }
 
+    // extract max values from attribute (default 10000)
+    int64_t max_value = pow( 10, TOKEN_PRECISION );
+    for ( const auto& [key, value] : values ) {
+        max_value = max( max_value, value );
+    }
+
     // verify wrap for this template doesn't already exist
     const auto index = _pools.get_index<"bytemplate"_n>();
     const auto itr = index.find( template_id );
@@ -194,7 +200,7 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
 
     // validate max supply (enforce max supply)
     const symbol sym = { symcode, TOKEN_PRECISION };
-    int64_t max_supply_amount = mytemplate.max_supply * pow( 10, TOKEN_PRECISION );
+    int64_t max_supply_amount = mytemplate.max_supply * max_value;
     if ( max_supply_amount == 0 || max_supply_amount > MAX_SUPPLY ) max_supply_amount = MAX_SUPPLY;
     // check( max_supply_amount > 0, ERROR_INVALID_MAX_SUPPLY );
 
@@ -214,6 +220,32 @@ void pool::create( const symbol_code symcode, const name collection_name, const 
     // logging
     logcreate_action logcreate( get_self(), { get_self(), "active"_n });
     logcreate.send( sym, collection_name, template_id, attribute, values );
+}
+
+[[eosio::action]]
+void pool::setmax( const symbol_code symcode )
+{
+    stats _stats( get_self(), symcode.raw() );
+    pools_table _pools( get_self(), get_self().value );
+
+    // restrict creation authority
+    require_auth( get_self() );
+
+    auto stats = _stats.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+    auto pool = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+    const auto& mytemplate = atomic::get_template( pool.collection_name, pool.template_id );
+
+    // extract max values from attribute (default 10000)
+    int64_t max_value = pow( 10, TOKEN_PRECISION );
+    for ( const auto& [key, value] : pool.values ) {
+        max_value = max( max_value, value );
+    }
+
+    // set max supply
+    int64_t max_supply_amount = mytemplate.max_supply * max_value;
+    _stats.modify( stats, get_self(), [&]( auto& row ) {
+        row.max_supply.amount = max_supply_amount;
+    });
 }
 
 [[eosio::action]]
