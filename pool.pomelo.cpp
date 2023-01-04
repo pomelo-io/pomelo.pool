@@ -231,8 +231,8 @@ void pool::setmax( const symbol_code symcode )
     // restrict creation authority
     require_auth( get_self() );
 
-    auto stats = _stats.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
-    auto pool = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+    auto & stats = _stats.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+    auto & pool = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
     const auto& mytemplate = atomic::get_template( pool.collection_name, pool.template_id );
 
     // extract max values from attribute (default 10000)
