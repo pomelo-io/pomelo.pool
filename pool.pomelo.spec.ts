@@ -7,12 +7,12 @@ const blockchain = new Blockchain()
 // contracts
 const contracts = {
   pool: blockchain.createContract('pool.pomelo', 'pool.pomelo', true),
-  atomic: blockchain.createContract('atomicassets', 'external/atomicassets/atomicassets', true),
+  atomic: blockchain.createContract('atomicassets', 'include/atomicassets/atomicassets', true),
 }
 
 const fake = {
-  pool: blockchain.createContract('pool.fake', 'external/eosio.token/eosio.token', true),
-  atomic: blockchain.createContract('atomic.fake', 'external/atomicassets/atomicassets', true),
+  pool: blockchain.createContract('pool.fake', 'include/eosio.token/eosio.token', true),
+  atomic: blockchain.createContract('atomic.fake', 'include/atomicassets/atomicassets', true),
 }
 
 // accounts

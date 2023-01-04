@@ -11,8 +11,9 @@
     "Yaro Shkvorets"
   ],
   "scripts": {
-    "build": "./scripts/build.sh",
-    "test": "jest --verbose"
+    "build": "blanc++ pool.pomelo.cpp -I include",
+    "release": "cdt-cpp pool.pomelo.cpp -I include",
+    "test": "jest"
   },
   "devDependencies": {
     "@proton/vert": "*",
