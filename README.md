@@ -1,4 +1,7 @@
-# 🍈 `Pomelo` NFT pool [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/facebook/react/blob/main/LICENSE) [![EOSIO Smart Contract](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml/badge.svg)](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml)
+# 🍈 `Pomelo` NFT pool
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/pomelo-io/pomelo.pool/blob/main/LICENSE)
+[![Antelope CDT](https://github.com/pomelo-io/pomelo.pool/actions/workflows/release.yml/badge.svg)](https://github.com/pomelo-io/pomelo.pool/actions/workflows/release.yml)
+[![Blanc++ Vert](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml/badge.svg)](https://github.com/pomelo-io/pomelo.pool/actions/workflows/tests.yml)
 
 # Overview
 
