@@ -280,6 +280,7 @@ void pool::rename( const symbol_code symcode, const symbol_code new_symcode, con
 
     pools_table _pools( get_self(), get_self().value );
     stats _stats( get_self(), symcode.raw() );
+    stats _stats_new( get_self(), new_symcode.raw() );
 
     // pool info
     const auto & pools = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
@@ -310,7 +311,7 @@ void pool::rename( const symbol_code symcode, const symbol_code new_symcode, con
         row.values = values;
     });
 
-    _stats.emplace( get_self(), [&]( auto& row ) {
+    _stats_new.emplace( get_self(), [&]( auto& row ) {
         row.supply = {supply.amount, symbol{new_symcode, sym.precision()}};
         row.max_supply = {max_supply.amount, symbol{new_symcode, sym.precision()}};
         row.issuer = issuer;
