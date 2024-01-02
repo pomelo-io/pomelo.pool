@@ -280,29 +280,53 @@ void pool::rename( const symbol_code symcode, const symbol_code new_symcode, con
 
     pools_table _pools( get_self(), get_self().value );
     stats _stats( get_self(), symcode.raw() );
+
+    // pool info
     const auto & pools = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+    const symbol sym = pools.sym;
+    const name collection_name = pools.collection_name;
+    const name schema_name = pools.schema_name;
+    const int32_t template_id = pools.template_id;
+    const atomicdata::FORMAT attribute = pools.attribute;
+    const map<string, int64_t> values = pools.values;
+
+    // supply info
+    const auto& st = _stats.get( symcode.raw(), "symbol does not exist" );
+    const asset supply = st.supply;
+    const asset max_supply = st.max_supply;
+    const name issuer = st.issuer;
 
     // rename pool symbol
-    const asset supply = token::get_supply( get_self(), symcode );
-    _pools.modify( pools, get_self(), [&]( auto& row ) {
-        row.sym = {new_symcode, pools.sym.precision()};
+    _pools.erase( pools );
+    _stats.erase( st );
+
+    // replace new primary keys
+    _pools.emplace( get_self(), [&]( auto& row ) {
+        row.sym = symbol{new_symcode, sym.precision()};
+        row.collection_name = collection_name;
+        row.schema_name = schema_name;
+        row.template_id = template_id;
+        row.attribute = attribute;
+        row.values = values;
     });
 
-    // rename stats token symbol
-   const auto& st = _stats.get( symcode.raw(), "symbol does not exist" );
-   _stats.modify( st, get_self(), [&]( auto& row ) {
-        row.supply.symbol = {new_symcode, pools.sym.precision()};
-   });
+    _stats.emplace( get_self(), [&]( auto& row ) {
+        row.supply = {supply.amount, symbol{new_symcode, sym.precision()}};
+        row.max_supply = {max_supply.amount, symbol{new_symcode, sym.precision()}};
+        row.issuer = issuer;
+    });
 
     // rename accounts balance token symbol
     int64_t total_accounts_amount = 0;
     for ( const name& account : accounts ) {
         accounts_table _accounts( get_self(), account.value );
         const auto& accnt = _accounts.get( symcode.raw(), "symbol does not exist for account" );
-        _accounts.modify( accnt, get_self(), [&]( auto& row ) {
-            row.balance.symbol = {new_symcode, pools.sym.precision()};
+        const int64_t balance = accnt.balance.amount;
+        _accounts.erase( accnt );
+        _accounts.emplace( get_self(), [&]( auto& row ) {
+            row.balance = {balance, {new_symcode, pools.sym.precision()}};
         });
-        total_accounts_amount += accnt.balance.amount;
+        total_accounts_amount += balance;
     }
     check( supply.amount == total_accounts_amount, "pool::rename: renaming pool must match accounts with active supply" );
 }
