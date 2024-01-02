@@ -247,6 +247,12 @@ public:
     [[eosio::action]]
     void logdestroy( const eosio::symbol symbol, const name collection_name, const int32_t template_id );
 
+    [[eosio::action]]
+    void rename( const symbol_code symcode, const symbol_code new_symcode, const vector<name> accounts );
+
+    [[eosio::action]]
+    void logrename( const eosio::symbol symbol, const name collection_name, const int32_t template_id, const symbol_code new_symcode, const vector<name> accounts );
+
     /**
      *  This action issues to `to` account a `quantity` of tokens.
      *
@@ -318,8 +324,8 @@ public:
 
     static asset get_balance( const name& token_contract_account, const name& owner, const symbol_code& sym_code )
     {
-        accounts accountstable( token_contract_account, owner.value );
-        const auto& ac = accountstable.get( sym_code.raw(), "no balance with specified symbol" );
+        accounts_table _accounts( token_contract_account, owner.value );
+        const auto& ac = _accounts.get( sym_code.raw(), "no balance with specified symbol" );
         return ac.balance;
     }
 
@@ -328,7 +334,7 @@ public:
 
         uint64_t primary_key()const { return balance.symbol.code().raw(); }
     };
-    typedef eosio::multi_index< "accounts"_n, account > accounts;
+    typedef eosio::multi_index< "accounts"_n, account > accounts_table;
 
     struct [[eosio::table]] currency_stats {
         asset    supply;
@@ -361,12 +367,14 @@ public:
     // static actions
     using create_action = eosio::action_wrapper<"create"_n, &pool::create>;
     using destroy_action = eosio::action_wrapper<"destroy"_n, &pool::destroy>;
+    using rename_action = eosio::action_wrapper<"rename"_n, &pool::rename>;
 
     // logs
     using logmint_action = eosio::action_wrapper<"logmint"_n, &pool::logmint>;
     using logredeem_action = eosio::action_wrapper<"logredeem"_n, &pool::logredeem>;
     using logcreate_action = eosio::action_wrapper<"logcreate"_n, &pool::logcreate>;
     using logdestroy_action = eosio::action_wrapper<"logdestroy"_n, &pool::logdestroy>;
+    using logrename_action = eosio::action_wrapper<"logrename"_n, &pool::logrename>;
 
     // token
     using issue_action = eosio::action_wrapper<"issue"_n, &pool::issue>;

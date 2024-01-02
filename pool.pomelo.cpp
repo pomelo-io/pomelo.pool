@@ -272,6 +272,41 @@ void pool::destroy( const symbol_code symcode )
    _stats.erase( st );
 }
 
+[[eosio::action]]
+void pool::rename( const symbol_code symcode, const symbol_code new_symcode, const vector<name> accounts )
+{
+    // authorized
+    require_auth( get_self() );
+
+    pools_table _pools( get_self(), get_self().value );
+    stats _stats( get_self(), symcode.raw() );
+    const auto & pools = _pools.get( symcode.raw(), ERROR_POOL_NOT_EXISTS.c_str() );
+
+    // rename pool symbol
+    const asset supply = token::get_supply( get_self(), symcode );
+    _pools.modify( pools, get_self(), [&]( auto& row ) {
+        row.sym = {new_symcode, pools.sym.precision()};
+    });
+
+    // rename stats token symbol
+   const auto& st = _stats.get( symcode.raw(), "symbol does not exist" );
+   _stats.modify( st, get_self(), [&]( auto& row ) {
+        row.supply.symbol = {new_symcode, pools.sym.precision()};
+   });
+
+    // rename accounts balance token symbol
+    int64_t total_accounts_amount = 0;
+    for ( const name& account : accounts ) {
+        accounts_table _accounts( get_self(), account.value );
+        const auto& accnt = _accounts.get( symcode.raw(), "symbol does not exist for account" );
+        _accounts.modify( accnt, get_self(), [&]( auto& row ) {
+            row.balance.symbol = {new_symcode, pools.sym.precision()};
+        });
+        total_accounts_amount += accnt.balance.amount;
+    }
+    check( supply.amount == total_accounts_amount, "pool::rename: renaming pool must match accounts with active supply" );
+}
+
 // Memo schemas
 // ============
 // Single: `<asset_id>` (ex: "1099511627777")

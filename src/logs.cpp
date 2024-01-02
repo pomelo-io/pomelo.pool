@@ -39,3 +39,9 @@ void pool::logdestroy( const symbol sym, const name collection_name, const int32
 {
     require_auth( get_self() );
 }
+
+[[eosio::action]]
+void pool::logrename( const eosio::symbol symbol, const name collection_name, const int32_t template_id, const symbol_code new_symcode, const vector<name> accounts )
+{
+    require_auth( get_self() );
+}
